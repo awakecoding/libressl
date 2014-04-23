@@ -152,3 +152,12 @@ YOU SHOULD NOT HAVE BOTH DES_RISC1 AND DES_RISC2 DEFINED!!!!!
 
 #endif /* DES_DEFAULT_OPTIONS */
 #endif /* HEADER_DES_LOCL_H */
+
+/* Fix for missing mallocarray()/reallocarray() definitions */
+
+#define mallocarray(_num, _size) \
+	calloc(_num, _size)
+
+#define reallocarray(_ptr, _num, _size) \
+	realloc(_ptr, _num * _size)
+
