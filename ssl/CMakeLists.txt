@@ -80,6 +80,8 @@ set(${MODULE_PREFIX}_INCLUDE_HEADERS
 	${SSL_SRC}/crypto/dh/dh.h
 	${SSL_SRC}/crypto/rsa/rsa.h
 	${SSL_SRC}/crypto/asn1/asn1.h
+	${SSL_SRC}/crypto/asn1/asn1_mac.h
+	${SSL_SRC}/crypto/krb5/krb5_asn.h
 	${SSL_SRC}/crypto/dsa/dsa.h
 	${SSL_SRC}/crypto/evp/evp.h
 	${SSL_SRC}/crypto/ec/ec.h
@@ -87,14 +89,22 @@ set(${MODULE_PREFIX}_INCLUDE_HEADERS
 	${SSL_SRC}/crypto/ecdh/ecdh.h
 	${SSL_SRC}/crypto/sha/sha.h
 	${SSL_SRC}/crypto/err/err.h
-	${SSL_SRC}/crypto/err/lhash.h
+	${SSL_SRC}/crypto/lhash/lhash.h
+	${SSL_SRC}/crypto/rand/rand.h
 	${SSL_SRC}/crypto/x509/x509.h
 	${SSL_SRC}/crypto/x509/x509_vfy.h
+	${SSL_SRC}/crypto/x509v3/x509v3.h
 	${SSL_SRC}/crypto/pkcs7/pkcs7.h
+	${SSL_SRC}/crypto/md5/md5.h
 	${SSL_SRC}/crypto/pem/pem.h
 	${SSL_SRC}/crypto/pem/pem2.h
 	${SSL_SRC}/crypto/hmac/hmac.h
 	${SSL_SRC}/crypto/pqueue/pqueue.h
+	${SSL_SRC}/crypto/engine/engine.h
+	${SSL_SRC}/crypto/ui/ui.h
+	${SSL_SRC}/crypto/srp/srp.h
+	${SSL_SRC}/crypto/ocsp/ocsp.h
+	${SSL_SRC}/crypto/conf/conf.h
 	${SSL_SRC}/crypto/crypto.h
 	${SSL_SRC}/crypto/opensslv.h
 	${SSL_SRC}/crypto/ossl_typ.h
