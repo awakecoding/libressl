@@ -22,12 +22,12 @@ if(_in_source_build)
 	message(FATAL_ERROR "Clear the cache by removing the CMakeCache.txt file in ${CMAKE_SOURCE_DIR} first.")
 endif(_in_source_build)
 
-find_package(Perl)
+if(NOT DEFINED BUILD_SHARED_LIBS)
+	set(BUILD_SHARED_LIBS ON)
+endif()
 
-if(WIN32)
-	set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR})
-	set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR})
-endif(WIN32)
+set(CMAKE_INSTALL_INCLUDEDIR "include")
+set(CMAKE_INSTALL_LIBDIR "lib")
 
 if(MSVC)
 	set(CMAKE_C_FLAGS "/DWIN32 /D_WIN32 /D_WINDOWS /W3 /GR /EHsc")
@@ -40,5 +40,7 @@ check_c_compiler_flag(-Wno-attributes Wno-attributes)
 if(Wno-attributes)
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-attributes")
 endif(Wno-attributes)
+
+find_package(Perl)
 
 add_subdirectory(ssl)
