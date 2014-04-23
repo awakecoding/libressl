@@ -1,6 +1,6 @@
 
-set(MODULE_NAME "libssl")
-set(MODULE_PREFIX "LIBSSL")
+set(MODULE_NAME "ssl")
+set(MODULE_PREFIX "SSL")
 
 project(${MODULE_NAME} C)
 
@@ -112,30 +112,32 @@ set(${MODULE_PREFIX}_INCLUDE_HEADERS
 	
 add_library(${MODULE_NAME} ${${MODULE_PREFIX}_HEADERS} ${${MODULE_PREFIX}_SOURCES})
 
-message(${SSL_INCLUDE})
-
 add_custom_target(ssl_include_headers DEPENDS ssl-include-headers)
 
 add_custom_command(OUTPUT ssl-include-headers
-	COMMAND mkdir
-	ARGS -p "${SSL_INCLUDE}/openssl"
+	COMMAND ${CMAKE_COMMAND} -E make_directory "${SSL_INCLUDE}/openssl"
 	COMMENT "Creating ${SSL_INCLUDE}/openssl")
 
 foreach(INCLUDE_HEADER ${${MODULE_PREFIX}_INCLUDE_HEADERS})
 	get_filename_component(INCLUDE_HEADER_FILE ${INCLUDE_HEADER} NAME)
-	
 	add_custom_command(TARGET ssl_include_headers
-		COMMAND cp "${INCLUDE_HEADER}" "${SSL_INCLUDE}/openssl/${INCLUDE_HEADER_FILE}"
+		COMMAND ${CMAKE_COMMAND} -E copy "${INCLUDE_HEADER}" "${SSL_INCLUDE}/openssl/${INCLUDE_HEADER_FILE}"
 		COMMENT "Copying ${INCLUDE_HEADER}")
 endforeach()
 
 set(SSL_OBJECTS_DIR "${CMAKE_SOURCE_DIR}/src/crypto/objects")
 
-add_custom_command(TARGET ssl_include_headers
-	COMMAND perl "${SSL_OBJECTS_DIR}/objects.pl" "${SSL_OBJECTS_DIR}/objects.txt" "${SSL_OBJECTS_DIR}/obj_mac.num" "${SSL_INCLUDE}/openssl/obj_mac.h"
-	COMMENT "Generating obj_mac.h")
-	
-configure_file(${CMAKE_SOURCE_DIR}/opensslconf.h.in "${SSL_INCLUDE}/openssl/opensslconf.h" @ONLY)
+if(PERL_FOUND)
+	add_custom_command(TARGET ssl_include_headers
+		COMMAND ${PERL_EXECUTABLE} "${SSL_OBJECTS_DIR}/objects.pl" "${SSL_OBJECTS_DIR}/objects.txt" "${SSL_OBJECTS_DIR}/obj_mac.num" "${SSL_INCLUDE}/openssl/obj_mac.h"
+		COMMENT "Generating obj_mac.h")
+else(PERL_FOUND)
+	add_custom_command(TARGET ssl_include_headers
+		COMMAND cp "${CMAKE_SOURCE_DIR}/ssl/obj_mac.h" "${SSL_INCLUDE}/openssl/${INCLUDE_HEADER_FILE}"
+		COMMENT "Copying pre-generated obj_mac.h (install perl to generate)")
+endif(PERL_FOUND)
+
+configure_file(${CMAKE_SOURCE_DIR}/ssl/opensslconf.h.in "${SSL_INCLUDE}/openssl/opensslconf.h" @ONLY)
 
 add_dependencies(${MODULE_NAME} ssl_include_headers)
 

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.6)
 
 project(LibreSSL C)
 
@@ -10,37 +10,35 @@ include(TestBigEndian)
 include(GNUInstallDirs)
 include(CheckIncludeFiles)
 include(CheckLibraryExists)
+include(CheckCCompilerFlag)
 include(CheckStructHasMember)
 include(CMakeDetermineSystem)
 include(FindPackageHandleStandardArgs)
 
+# Force out of source build
+string(COMPARE EQUAL "${CMAKE_SOURCE_DIR}" "${CMAKE_BINARY_DIR}" _in_source_build)
+if(_in_source_build)
+	message(SEND_ERROR "LibreSSL requires an out of source build. Please create a new directory and run cmake /path/to/libressl [options] from there. For instance: mkdir build && cd build && cmake ..")
+	message(FATAL_ERROR "Clear the cache by removing the CMakeCache.txt file in ${CMAKE_SOURCE_DIR} first.")
+endif(_in_source_build)
+
+find_package(Perl)
+
 if(WIN32)
 	set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR})
 	set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR})
-endif()
+endif(WIN32)
 
 if(MSVC)
-	set(CMAKE_CXX_FLAGS "/DWIN32 /D_WIN32 /D_WINDOWS /W3 /GR /EHsc")
+	set(CMAKE_C_FLAGS "/DWIN32 /D_WIN32 /D_WINDOWS /W3 /GR /EHsc")
+	set(CMAKE_C_FLAGS_DEBUG "/D_DEBUG /MTd /Zi /Ob0 /Od /RTC1")
+	set(CMAKE_C_FLAGS_RELEASE "/MT /O2 /Ob2 /DNDEBUG")
+endif(MSVC)
 
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DUNICODE -D_UNICODE")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_CRT_SECURE_NO_WARNINGS")
-
-	set(CMAKE_CXX_FLAGS_DEBUG "/D_DEBUG /MTd /Zi /Ob0 /Od /RTC1")
-	set(CMAKE_CXX_FLAGS_RELEASE "/MT /O2 /Ob2 /DNDEBUG")
-
-	if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_AMD64_")
-	else()
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_X86_")
-	endif()
-
-	message(STATUS "CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}")
-	message(STATUS "CMAKE_CXX_FLAGS_DEBUG ${CMAKE_CXX_FLAGS_DEBUG}")
-	message(STATUS "CMAKE_CXX_FLAGS_RELEASE ${CMAKE_CXX_FLAGS_RELEASE}")
-
-	set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS}")
-	set(CMAKE_C_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
-	set(CMAKE_C_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
-endif()
+# Silence "warning: ‘__bounded__’ attribute directive ignored [-Wattributes]" for now
+check_c_compiler_flag(-Wno-attributes Wno-attributes)
+if(Wno-attributes)
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-attributes")
+endif(Wno-attributes)
 
 add_subdirectory(ssl)
