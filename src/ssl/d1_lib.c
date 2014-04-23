@@ -57,14 +57,52 @@
  *
  */
 
-#include <sys/param.h>
-#include <sys/socket.h>
-
-#include <netinet/in.h>
-
 #include <stdio.h>
 #include <openssl/objects.h>
 #include "ssl_locl.h"
+
+#ifndef _WIN32
+#include <sys/param.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#else
+
+#if defined(_MSC_VER) || defined(_MSC_EXTENSIONS)
+  #define DELTA_EPOCH_IN_MICROSECS 11644473600000000Ui64
+#else
+  #define DELTA_EPOCH_IN_MICROSECS 11644473600000000ULL
+#endif
+ 
+struct timezone
+{
+	int  tz_minuteswest;
+	int  tz_dsttime;
+};
+ 
+int gettimeofday(struct timeval* tv, struct timezone* tz)
+{
+	FILETIME ft;
+	static int tzflag = 0;
+	unsigned __int64 tmpres = 0;
+
+	if (tv)
+	{
+		GetSystemTimeAsFileTime(&ft);
+
+		tmpres |= ft.dwHighDateTime;
+		tmpres <<= 32;
+		tmpres |= ft.dwLowDateTime;
+
+		tmpres /= 10;
+		tmpres -= DELTA_EPOCH_IN_MICROSECS;
+
+		tv->tv_sec = (long)(tmpres / 1000000UL);
+		tv->tv_usec = (long)(tmpres % 1000000UL);
+	}
+
+	return 0;
+}
+#endif
 
 const char dtls1_version_str[]="DTLSv1" OPENSSL_VERSION_PTEXT;
 int dtls1_listen(SSL *s, struct sockaddr *client);

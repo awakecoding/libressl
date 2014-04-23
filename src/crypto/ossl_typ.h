@@ -57,6 +57,15 @@
 
 #include <openssl/e_os2.h>
 
+#ifdef OPENSSL_SYS_WIN32
+#undef X509_NAME
+#undef X509_CERT_PAIR
+#undef X509_EXTENSIONS
+#undef OCSP_RESPONSE
+#undef PKCS7_SIGNER_INFO
+#undef PKCS7_ISSUER_AND_SERIAL
+#endif
+
 #ifdef NO_ASN1_TYPEDEFS
 #define ASN1_INTEGER		ASN1_STRING
 #define ASN1_ENUMERATED		ASN1_STRING

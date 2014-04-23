@@ -62,7 +62,10 @@
 
 #include <openssl/buffer.h>
 #include <openssl/pqueue.h>
+
+#ifndef _WIN32
 #include <sys/time.h>
+#endif
 
 #ifdef  __cplusplus
 extern "C" {

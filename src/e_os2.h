@@ -62,7 +62,33 @@
 extern "C" {
 #endif
 
+#ifdef _WIN32
+#define OPENSSL_SYS_WIN32
+
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+
+#include <winsock2.h>
+#include <windows.h>
+#include <ws2tcpip.h>
+
+#define __attribute__(_x)
+
+#define snprintf(_str, _size, _format, ...) \
+	_snprintf_s(_str, _size, 1, _format, ## __VA_ARGS__)
+
+static __inline size_t strlcat(char *dst, const char *src, size_t dstsize) {
+	if (!strcat_s(dst, dstsize, src)) {
+		return strlen(dst);
+	} else {
+		return 0;
+	}
+}
+
+#else
 #define OPENSSL_SYS_UNIX
+#endif
 
 /* Specials for I/O an exit */
 # define OPENSSL_EXPORT extern

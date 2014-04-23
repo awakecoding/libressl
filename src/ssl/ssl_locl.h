@@ -149,7 +149,10 @@
 #include <time.h>
 #include <string.h>
 #include <errno.h>
+
+#ifndef _WIN32
 #include <unistd.h>
+#endif
 
 #include <openssl/opensslconf.h>
 #include <openssl/e_os2.h>
