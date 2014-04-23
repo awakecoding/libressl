@@ -1,0 +1,46 @@
+cmake_minimum_required(VERSION 2.8)
+
+project(LibreSSL C)
+
+set(CMAKE_COLOR_MAKEFILE ON)
+set(CMAKE_SUPPRESS_REGENERATION ON)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
+include(TestBigEndian)
+include(GNUInstallDirs)
+include(CheckIncludeFiles)
+include(CheckLibraryExists)
+include(CheckStructHasMember)
+include(CMakeDetermineSystem)
+include(FindPackageHandleStandardArgs)
+
+if(WIN32)
+	set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR})
+	set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR})
+endif()
+
+if(MSVC)
+	set(CMAKE_CXX_FLAGS "/DWIN32 /D_WIN32 /D_WINDOWS /W3 /GR /EHsc")
+
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DUNICODE -D_UNICODE")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_CRT_SECURE_NO_WARNINGS")
+
+	set(CMAKE_CXX_FLAGS_DEBUG "/D_DEBUG /MTd /Zi /Ob0 /Od /RTC1")
+	set(CMAKE_CXX_FLAGS_RELEASE "/MT /O2 /Ob2 /DNDEBUG")
+
+	if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_AMD64_")
+	else()
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_X86_")
+	endif()
+
+	message(STATUS "CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}")
+	message(STATUS "CMAKE_CXX_FLAGS_DEBUG ${CMAKE_CXX_FLAGS_DEBUG}")
+	message(STATUS "CMAKE_CXX_FLAGS_RELEASE ${CMAKE_CXX_FLAGS_RELEASE}")
+
+	set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS}")
+	set(CMAKE_C_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
+	set(CMAKE_C_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
+endif()
+
+add_subdirectory(ssl)
