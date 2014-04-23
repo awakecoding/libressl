@@ -59,9 +59,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#ifdef OPENSSL_NO_STDIO
-#define APPS_WIN16
-#endif
 #include "apps.h"
 #include <openssl/err.h>
 #include <openssl/ssl.h>
@@ -149,7 +146,7 @@ ciphers_main(int argc, char **argv)
 
 
 	if (!verbose) {
-		for (i = 0;; i++) {
+		for (i = 0; ; i++) {
 			p = SSL_get_cipher_list(ssl, i);
 			if (p == NULL)
 				break;
@@ -180,7 +177,8 @@ ciphers_main(int argc, char **argv)
 				else
 					BIO_printf(STDout, "0x%02X,0x%02X,0x%02X,0x%02X - ", id0, id1, id2, id3);	/* whatever */
 			}
-			BIO_puts(STDout, SSL_CIPHER_description(c, buf, sizeof buf));
+			BIO_puts(STDout,
+			    SSL_CIPHER_description(c, buf, sizeof buf));
 		}
 	}
 
@@ -190,6 +188,7 @@ err:
 		SSL_load_error_strings();
 		ERR_print_errors(bio_err);
 	}
+
 end:
 	if (ctx != NULL)
 		SSL_CTX_free(ctx);
