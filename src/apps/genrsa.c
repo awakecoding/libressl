@@ -109,7 +109,7 @@ genrsa_main(int argc, char **argv)
 	if (!bn)
 		goto err;
 
-	apps_startup();
+	signal(SIGPIPE, SIG_IGN);
 	BN_GENCB_set(&cb, genrsa_cb, bio_err);
 
 	if (bio_err == NULL)
@@ -256,7 +256,7 @@ bad:
 	 */
 	l = 0L;
 	for (i = 0; i < rsa->e->top; i++) {
-#ifndef SIXTY_FOUR_BIT
+#ifndef _LP64
 		l <<= BN_BITS4;
 		l <<= BN_BITS4;
 #endif
@@ -284,7 +284,7 @@ err:
 		free(passout);
 	if (ret != 0)
 		ERR_print_errors(bio_err);
-	apps_shutdown();
+	
 	return (ret);
 }
 
@@ -303,15 +303,6 @@ genrsa_cb(int p, int n, BN_GENCB * cb)
 		c = '\n';
 	BIO_write(cb->arg, &c, 1);
 	(void) BIO_flush(cb->arg);
-#ifdef LINT
-	p = n;
-#endif
 	return 1;
 }
-#else				/* !OPENSSL_NO_RSA */
-
-#if PEDANTIC
-static void *dummy = &dummy;
-#endif
-
 #endif

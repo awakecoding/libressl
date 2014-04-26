@@ -6,6 +6,7 @@
  */
 
 #include <openssl/modes.h>
+#include <machine/endian.h>
 
 
 #if (defined(_WIN32) || defined(_WIN64)) && !defined(__MINGW32__)
@@ -33,7 +34,7 @@ typedef unsigned char u8;
 # undef STRICT_ALIGNMENT
 #endif
 
-#if !defined(PEDANTIC) && !defined(OPENSSL_NO_ASM) && !defined(OPENSSL_NO_INLINE_ASM)
+#if !defined(OPENSSL_NO_ASM) && !defined(OPENSSL_NO_INLINE_ASM)
 #if defined(__GNUC__) && __GNUC__>=2
 # if defined(__x86_64) || defined(__x86_64__)
 #  define BSWAP8(x) ({	u64 ret=(x);			\

@@ -73,7 +73,7 @@ passwd_main(int argc, char **argv)
 	int usecrypt = 0, use1 = 0, useapr1 = 0;
 	size_t pw_maxlen = 0;
 
-	apps_startup();
+	signal(SIGPIPE, SIG_IGN);
 
 	if (bio_err == NULL)
 		if ((bio_err = BIO_new(BIO_s_file())) != NULL)
@@ -257,7 +257,7 @@ err:
 		BIO_free(in);
 	if (out)
 		BIO_free_all(out);
-	apps_shutdown();
+	
 	return (ret);
 }
 
@@ -349,10 +349,7 @@ md5crypt(const char *passwd, const char *magic, const char *salt)
 			buf_perm[dest] = buf[source];
 		buf_perm[14] = buf[5];
 		buf_perm[15] = buf[11];
-#ifndef PEDANTIC		/* Unfortunately, this generates a "no
-				 * effect" warning */
 		assert(16 == sizeof buf_perm);
-#endif
 
 		output = salt_out + salt_len;
 		assert(output == out_buf + strlen(out_buf));

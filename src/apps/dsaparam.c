@@ -124,7 +124,7 @@ dsaparam_main(int argc, char **argv)
 	int timebomb = 0;
 #endif
 
-	apps_startup();
+	signal(SIGPIPE, SIG_IGN);
 
 	if (bio_err == NULL)
 		if ((bio_err = BIO_new(BIO_s_file())) != NULL)
@@ -397,7 +397,7 @@ end:
 		BIO_free_all(out);
 	if (dsa != NULL)
 		DSA_free(dsa);
-	apps_shutdown();
+	
 	return (ret);
 }
 
@@ -416,19 +416,10 @@ dsa_cb(int p, int n, BN_GENCB * cb)
 		c = '\n';
 	BIO_write(cb->arg, &c, 1);
 	(void) BIO_flush(cb->arg);
-#ifdef LINT
-	p = n;
-#endif
 #ifdef GENCB_TEST
 	if (stop_keygen_flag)
 		return 0;
 #endif
 	return 1;
 }
-#else				/* !OPENSSL_NO_DSA */
-
-#if PEDANTIC
-static void *dummy = &dummy;
-#endif
-
 #endif

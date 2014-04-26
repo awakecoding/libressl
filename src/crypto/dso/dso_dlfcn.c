@@ -245,7 +245,6 @@ static char *
 dlfcn_merger(DSO *dso, const char *filespec1, const char *filespec2)
 {
 	char *merged;
-	size_t len;
 
 	if (!filespec1 && !filespec2) {
 		DSOerr(DSO_F_DLFCN_MERGER,
@@ -255,23 +254,19 @@ dlfcn_merger(DSO *dso, const char *filespec1, const char *filespec2)
 	/* If the first file specification is a rooted path, it rules.
 	   same goes if the second file specification is missing. */
 	if (!filespec2 || (filespec1 != NULL && filespec1[0] == '/')) {
-		len = strlen(filespec1) + 1;
-		merged = malloc(len);
+		merged = strdup(filespec1);
 		if (!merged) {
 			DSOerr(DSO_F_DLFCN_MERGER, ERR_R_MALLOC_FAILURE);
 			return (NULL);
 		}
-		strlcpy(merged, filespec1, len);
 	}
 	/* If the first file specification is missing, the second one rules. */
 	else if (!filespec1) {
-		len = strlen(filespec2) + 1;
-		merged = malloc(strlen(filespec2) + 1);
+		merged = strdup(filespec2);
 		if (!merged) {
 			DSOerr(DSO_F_DLFCN_MERGER, ERR_R_MALLOC_FAILURE);
 			return (NULL);
 		}
-		strlcpy(merged, filespec2, len);
 	} else
 		/* This part isn't as trivial as it looks.  It assumes that
 		   the second file specification really is a directory, and
@@ -279,7 +274,7 @@ dlfcn_merger(DSO *dso, const char *filespec1, const char *filespec2)
 		   the concatenation of filespec2 followed by a slash followed
 		   by filespec1. */
 	{
-		int spec2len, len;
+		size_t spec2len, len;
 
 		spec2len = strlen(filespec2);
 		len = spec2len + (filespec1 ? strlen(filespec1) : 0);

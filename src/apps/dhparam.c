@@ -162,7 +162,7 @@ dhparam_main(int argc, char **argv)
 #endif
 	int num = 0, g = 0;
 
-	apps_startup();
+	signal(SIGPIPE, SIG_IGN);
 
 	if (bio_err == NULL)
 		if ((bio_err = BIO_new(BIO_s_file())) != NULL)
@@ -475,7 +475,7 @@ end:
 		BIO_free_all(out);
 	if (dh != NULL)
 		DH_free(dh);
-	apps_shutdown();
+	
 	return (ret);
 }
 
@@ -495,16 +495,7 @@ dh_cb(int p, int n, BN_GENCB * cb)
 		c = '\n';
 	BIO_write(cb->arg, &c, 1);
 	(void) BIO_flush(cb->arg);
-#ifdef LINT
-	p = n;
-#endif
 	return 1;
 }
-
-#else				/* !OPENSSL_NO_DH */
-
-#if PEDANTIC
-static void *dummy = &dummy;
-#endif
 
 #endif

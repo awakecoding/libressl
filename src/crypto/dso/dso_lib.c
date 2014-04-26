@@ -107,12 +107,11 @@ DSO_new_method(DSO_METHOD *meth)
 		 * to stealing the "best available" method. Will fallback
 		 * to DSO_METH_null() in the worst case. */
 		default_DSO_meth = DSO_METHOD_openssl();
-	ret = (DSO *)malloc(sizeof(DSO));
+	ret = calloc(1, sizeof(DSO));
 	if (ret == NULL) {
 		DSOerr(DSO_F_DSO_NEW_METHOD, ERR_R_MALLOC_FAILURE);
 		return (NULL);
 	}
-	memset(ret, 0, sizeof(DSO));
 	ret->meth_data = sk_void_new_null();
 	if (ret->meth_data == NULL) {
 		/* sk_new doesn't generate any errors so we do */
@@ -357,12 +356,11 @@ DSO_set_filename(DSO *dso, const char *filename)
 		return (0);
 	}
 	/* We'll duplicate filename */
-	copied = malloc(strlen(filename) + 1);
+	copied = strdup(filename);
 	if (copied == NULL) {
 		DSOerr(DSO_F_DSO_SET_FILENAME, ERR_R_MALLOC_FAILURE);
 		return (0);
 	}
-	strlcpy(copied, filename, strlen(filename) + 1);
 	if (dso->filename)
 		free(dso->filename);
 	dso->filename = copied;
@@ -410,13 +408,12 @@ DSO_convert_filename(DSO *dso, const char *filename)
 			result = dso->meth->dso_name_converter(dso, filename);
 	}
 	if (result == NULL) {
-		result = malloc(strlen(filename) + 1);
+		result = strdup(filename);
 		if (result == NULL) {
 			DSOerr(DSO_F_DSO_CONVERT_FILENAME,
 			    ERR_R_MALLOC_FAILURE);
 			return (NULL);
 		}
-		strlcpy(result, filename, strlen(filename) + 1);
 	}
 	return (result);
 }
