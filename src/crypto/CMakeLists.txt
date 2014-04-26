@@ -31,6 +31,7 @@ string( REPLACE "#undef OPENSSL_EXPORT_VAR_AS_FUNCTION" "#cmakedefine OPENSSL_EX
     CONF "${CONF}" )
 
 set( CONF "
+#define OPENSSL_NO_ASM
 #define OPENSSL_NO_GMP
 #define OPENSSL_NO_JPAKE
 #define OPENSSL_NO_KRB5
@@ -55,9 +56,9 @@ endif()
 
 configure_file( ${CMAKE_CURRENT_BINARY_DIR}/opensslconf.h.cmake "${CMAKE_BINARY_DIR}/include/openssl/opensslconf.h")
 
-set(LIBSRC cryptlib.c malloc-wrapper.c mem_clr.c mem_dbg.c cversion.c ex_data.c cpt_err.c uid.c o_time.c o_str.c o_init.c)
+set(LIBSRC pal.c cryptlib.c malloc-wrapper.c mem_clr.c mem_dbg.c cversion.c ex_data.c cpt_err.c uid.c o_time.c o_str.c o_init.c)
 
-include_directories(../portability/include)
+include_directories(../pal/include)
 include_directories("${CMAKE_BINARY_DIR}/include")
 include_directories( ${CMAKE_CURRENT_BINARY_DIR} .. . asn1 evp modes )
 

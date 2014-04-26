@@ -43,6 +43,8 @@ endif(Wno-attributes)
 
 find_package(Perl)
 
+add_definitions(-DHAVE_OPENSSL_PAL_H)
+
 add_subdirectory(ssl)
 add_subdirectory(src)
 

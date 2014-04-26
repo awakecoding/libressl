@@ -7,7 +7,7 @@ project(${MODULE_NAME} C)
 add_definitions(-DTERMIOS)
 add_definitions(-DANSI_SOURCE)
 
-include_directories(../portability/include)
+include_directories(../pal/include)
 include_directories("${CMAKE_BINARY_DIR}/include")
 
 set(${MODULE_PREFIX}_HEADERS

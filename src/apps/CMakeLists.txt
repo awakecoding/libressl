@@ -23,7 +23,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-include_directories(../portability/include)
+include_directories(../pal/include)
 include_directories("${CMAKE_BINARY_DIR}/include")
 
 set ( E_SRC openssl.c #

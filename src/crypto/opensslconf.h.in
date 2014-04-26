@@ -1,5 +1,9 @@
 /* crypto/opensslconf.h.in */
 
+#ifdef HAVE_OPENSSL_PAL_H
+#include <openssl/pal.h>
+#endif
+
 /* Generate 80386 code? */
 #undef I386_ONLY
 
