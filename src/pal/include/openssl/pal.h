@@ -18,11 +18,13 @@ void* reallocarray(void *optr, size_t nmemb, size_t size);
 
 void arc4random_buf(void *buf, size_t nbytes);
 
+#ifndef _WIN32
 FILE* funopen(const void *cookie,
         int (*readfn)(void *cookie, char *buf, int size),
         int (*writefn)(void *cookie, const char *buf, int size),
         off_t (*seekfn)(void *cookie, off_t offset, int whence),
         int (*closefn)(void *cookie));
+#endif
 
 int issetugid(void);
 
