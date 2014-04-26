@@ -36,8 +36,10 @@ set( CONF "
 #define OPENSSL_NO_KRB5
 #define OPENSSL_NO_MD2
 #define OPENSSL_NO_RC5
+#define OPENSSL_NO_SEED
 #define OPENSSL_NO_RFC3779
 #define OPENSSL_NO_STORE
+#define OPENSSL_NO_IDEA
 #define OPENSSL_NO_DYNAMIC_ENGINE
 #define OPENSSL_NO_SCTP
 #define OPENSSL_NO_EC_NISTP_64_GCC_128
@@ -50,10 +52,13 @@ configure_file ( buildinf.h.cmake buildinf.h )
 if( WIN32 AND MINGW AND NOT CYGWIN )
   set( OPENSSL_EXPORT_VAR_AS_FUNCTION true )
 endif()
-configure_file( ${CMAKE_CURRENT_BINARY_DIR}/opensslconf.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/openssl/opensslconf.h )
 
-set(LIBSRC cryptlib.c mem_clr.c mem_dbg.c cversion.c ex_data.c cpt_err.c uid.c o_time.c o_str.c o_init.c)
+configure_file( ${CMAKE_CURRENT_BINARY_DIR}/opensslconf.h.cmake "${CMAKE_BINARY_DIR}/include/openssl/opensslconf.h")
 
+set(LIBSRC cryptlib.c malloc-wrapper.c mem_clr.c mem_dbg.c cversion.c ex_data.c cpt_err.c uid.c o_time.c o_str.c o_init.c)
+
+include_directories(../portability/include)
+include_directories("${CMAKE_BINARY_DIR}/include")
 include_directories( ${CMAKE_CURRENT_BINARY_DIR} .. . asn1 evp modes )
 
 if( BUILD_SHARED_LIBS )
@@ -128,7 +133,7 @@ add_submodule ( ecdsa ecs_lib.c ecs_asn1.c ecs_ossl.c ecs_sign.c ecs_vrf.c ecs_e
   EXHEADERS ecdsa.h )
 add_submodule ( engine eng_err.c eng_lib.c eng_list.c eng_init.c eng_ctrl.c eng_table.c
   eng_pkey.c eng_fat.c eng_all.c tb_rsa.c tb_dsa.c tb_ecdsa.c tb_dh.c tb_ecdh.c tb_rand.c
-  tb_store.c tb_cipher.c tb_digest.c tb_pkmeth.c tb_asnmth.c eng_openssl.c eng_cnf.c
+  tb_store.c tb_cipher.c tb_digest.c tb_pkmeth.c tb_asnmth.c eng_openssl.c eng_padlock.c eng_cnf.c
   eng_dyn.c eng_rdrand.c eng_rsax.c EXHEADERS engine.h )
 add_submodule ( err err.c err_all.c err_prn.c EXHEADERS err.h )
 add_submodule ( evp encode.c digest.c evp_enc.c evp_key.c evp_acnf.c e_des.c e_bf.c
@@ -140,7 +145,7 @@ add_submodule ( evp encode.c digest.c evp_enc.c evp_key.c evp_acnf.c e_des.c e_b
   pmeth_fn.c pmeth_gn.c m_sigver.c e_rc4_hmac_md5.c e_aes_cbc_hmac_sha1.c
   EXHEADERS evp.h )
 add_submodule ( hmac hmac.c hm_ameth.c hm_pmeth.c EXHEADERS hmac.h )
-add_submodule ( idea i_cbc.c i_cfb64.c i_ofb64.c i_ecb.c i_skey.c EXHEADERS idea.h )
+#add_submodule ( idea i_cbc.c i_cfb64.c i_ofb64.c i_ecb.c i_skey.c EXHEADERS idea.h )
 add_submodule ( krb5 krb5_asn.c EXHEADERS krb5_asn.h )
 add_submodule ( lhash lhash.c lh_stats.c EXHEADERS lhash.h )
 add_submodule ( md4 md4_dgst.c md4_one.c EXHEADERS md4.h )
@@ -194,6 +199,8 @@ add_submodule ( . EXHEADERS crypto.h opensslv.h opensslconf.h ebcdic.h symhacks.
   ossl_typ.h )
 
 add_library( crypto ${LIBSRC} ${OBJECTS_SRC} )
+
+add_dependencies(crypto ssl_include_headers)
 
 if( WIN32 AND NOT CYGWIN )
   target_link_libraries( crypto ws2_32 crypt32 )

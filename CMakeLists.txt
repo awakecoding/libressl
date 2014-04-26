@@ -43,5 +43,6 @@ endif(Wno-attributes)
 
 find_package(Perl)
 
-add_subdirectory(src/crypto)
 add_subdirectory(ssl)
+add_subdirectory(src)
+
