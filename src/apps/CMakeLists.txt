@@ -34,8 +34,8 @@ set ( E_SRC openssl.c #
   pkeyparam.c pkeyutl.c spkac.c smime.c cms.c rand.c engine.c ocsp.c prime.c ts.c
   srp.c )
 
-add_executable ( openssl ${E_SRC} )
-target_link_libraries ( openssl crypto ssl )
+add_executable(openssl ${E_SRC})
+target_link_libraries(openssl crypto ssl)
 
 install( TARGETS openssl
     RUNTIME DESTINATION bin )

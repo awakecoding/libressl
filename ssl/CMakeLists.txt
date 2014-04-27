@@ -109,7 +109,7 @@ if(PERL_FOUND)
 		COMMENT "Generating obj_mac.h")
 	
 	add_custom_command(TARGET ssl_include_headers
-		COMMAND cp "${SSL_OBJECTS_DIR}/obj_mac.h" "${SSL_INCLUDE}/openssl/obj_mac.h"
+		COMMAND ${CMAKE_COMMAND} -E copy "${SSL_OBJECTS_DIR}/obj_mac.h" "${SSL_INCLUDE}/openssl/obj_mac.h"
 		COMMENT "Copying generated obj_mac.h")
 	
 	add_custom_command(TARGET ssl_include_headers
@@ -117,15 +117,15 @@ if(PERL_FOUND)
 		COMMENT "Generating obj_dat.h")
 		
 	add_custom_command(TARGET ssl_include_headers
-		COMMAND cp "${SSL_OBJECTS_DIR}/obj_dat.h" "${SSL_INCLUDE}/openssl/obj_dat.h"
+		COMMAND ${CMAKE_COMMAND} -E copy "${SSL_OBJECTS_DIR}/obj_dat.h" "${SSL_INCLUDE}/openssl/obj_dat.h"
 		COMMENT "Copying generated obj_dat.h")
 else(PERL_FOUND)
 	add_custom_command(TARGET ssl_include_headers
-		COMMAND cp "${CMAKE_SOURCE_DIR}/ssl/obj_mac.h" "${SSL_INCLUDE}/openssl/obj_mac.h"
+		COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/ssl/obj_mac.h" "${SSL_INCLUDE}/openssl/obj_mac.h"
 		COMMENT "Copying pre-generated obj_mac.h (install perl to generate)")
 		
 	add_custom_command(TARGET ssl_include_headers
-		COMMAND cp "${CMAKE_SOURCE_DIR}/ssl/obj_dat.h" "${SSL_INCLUDE}/openssl/obj_dat.h"
+		COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/ssl/obj_dat.h" "${SSL_INCLUDE}/openssl/obj_dat.h"
 		COMMENT "Copying pre-generated obj_dat.h (install perl to generate)")
 endif(PERL_FOUND)
 
