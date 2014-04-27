@@ -8,9 +8,15 @@
 
 #ifndef __OpenBSD__
 
-void explicit_bzero(void *p, size_t n)
+/*
+ * The use of a volatile pointer guarantees that the compiler
+ * will not optimise the call away.
+ */
+void *(* volatile explicit_memset_impl)(void *, int, size_t) = memset;
+
+void explicit_bzero(void *b, size_t len)
 {
-	bzero(p, n);
+	(*explicit_memset_impl)(b, 0, len);
 }
 
 size_t strlcpy(char *dst, const char *src, size_t dstsize)
